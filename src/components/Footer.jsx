@@ -13,7 +13,7 @@ export default function Footer() {
         {/* Social Icons */}
         <div className="flex gap-6">
           <a
-            href="https://github.com/developernishant-code"
+            href="https://github.com/nishantstackdev"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
