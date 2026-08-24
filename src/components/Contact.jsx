@@ -9,6 +9,7 @@ export default function Contact() {
   });
 
   const [errors, setErrors] = useState({});
+  const [status, setStatus] = useState({ loading: false, success: false });
 
   // Handle Input Change
   const handleChange = (e) => {
@@ -40,24 +41,43 @@ export default function Contact() {
     return newErrors;
   };
 
-  // Handle Submit
-  const handleSubmit = (e) => {
+  // Handle Submit with Web3Forms (No Backend Needed)
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-    } else {
-      setErrors({});
-      console.log("Form Submitted:", formData);
+      return;
+    }
 
-      // Reset form
-      setFormData({ name: "", email: "", message: "" });
+    setErrors({});
+    setStatus({ loading: true, success: false });
+
+    try {
+      // Free form submission using Web3Forms API
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: "559d7f3f-4e86-4927-873c-c58d0910d3f3", // Get free key at web3forms.com
+          ...formData,
+        }),
+      });
+
+      if (response.ok) {
+        setStatus({ loading: false, success: true });
+        setFormData({ name: "", email: "", message: "" });
+        setTimeout(() => setStatus({ loading: false, success: false }), 5000);
+      }
+    } catch (error) {
+      setStatus({ loading: false, success: false });
+      alert("Failed to send message. Please try again.");
     }
   };
 
   return (
-    <section id="contact" className="py-20 px-6">
+    <section id="contact" className="py-20 px-6 bg-slate-900">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
         {/* Left Content */}
@@ -70,15 +90,15 @@ export default function Contact() {
           </p>
 
           <div className="space-y-5">
-            <div className="flex items-center gap-4">
+            <a href="mailto:nishantmathur572@email.com" className="flex items-center gap-4 hover:opacity-80 transition">
               <FiMail className="text-indigo-400 text-xl" />
               <span className="text-slate-300">nishantmathur572@email.com</span>
-            </div>
+            </a>
 
-            <div className="flex items-center gap-4">
+            <a href="tel:+916376073082" className="flex items-center gap-4 hover:opacity-80 transition">
               <FiPhone className="text-indigo-400 text-xl" />
               <span className="text-slate-300">+91 63760 73082</span>
-            </div>
+            </a>
 
             <div className="flex items-center gap-4">
               <FiMapPin className="text-indigo-400 text-xl" />
@@ -90,8 +110,15 @@ export default function Contact() {
         {/* Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-[#020617]/80 backdrop-blur rounded-2xl p-8 shadow-lg space-y-6"
+          className="bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl p-8 shadow-xl space-y-6"
         >
+          {/* Success Message Banner */}
+          {status.success && (
+            <div className="p-3 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-sm rounded-lg text-center">
+              Message sent successfully! I will get back to you soon.
+            </div>
+          )}
+
           {/* Name */}
           <div>
             <input
@@ -100,7 +127,7 @@ export default function Contact() {
               value={formData.name}
               onChange={handleChange}
               placeholder="Your Name"
-              className="w-full bg-transparent border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
             />
             {errors.name && (
               <p className="text-red-400 text-sm mt-1">{errors.name}</p>
@@ -115,7 +142,7 @@ export default function Contact() {
               value={formData.email}
               onChange={handleChange}
               placeholder="Your Email"
-              className="w-full bg-transparent border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
             />
             {errors.email && (
               <p className="text-red-400 text-sm mt-1">{errors.email}</p>
@@ -130,7 +157,7 @@ export default function Contact() {
               value={formData.message}
               onChange={handleChange}
               placeholder="Your Message"
-              className="w-full bg-transparent border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
             />
             {errors.message && (
               <p className="text-red-400 text-sm mt-1">{errors.message}</p>
@@ -139,9 +166,10 @@ export default function Contact() {
 
           <button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-500 transition rounded-lg py-3 font-medium text-white"
+            disabled={status.loading}
+            className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 transition rounded-lg py-3 font-medium text-white shadow-lg shadow-indigo-600/20"
           >
-            Send Message
+            {status.loading ? "Sending..." : "Send Message"}
           </button>
         </form>
       </div>
