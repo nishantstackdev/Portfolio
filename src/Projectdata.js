@@ -1,15 +1,15 @@
 import portfolioimg from "./assets/4.png";
-import todoimg from "./assets/2.png";
+import EquityPulse from "./assets/EquityPulse.png";
 import ecoming from "./assets/3.png";
 
 export const projects = [
   {
-    title: "To Do App",
-    description: "Interactive task management application built with React, featuring state persistence and task categorization.",
-    image: todoimg,
-    techStack: ["React", "JavaScript", "Tailwind CSS"],
-    live: "https://basictoodo.netlify.app/",
-    github: "https://github.com/developernishant-code/To-do-App",
+    title: "EquityPulse",
+    description: "EquityPulse is a high-performance, real-time financial stock screener web application that handles over 5,000 active records smoothly at 55+ FPS using TanStack Virtual and TradingView Lightweight Charts.",
+    image: EquityPulse,
+    techStack: ["React", "TypeScript", "Tailwind CSS"],
+    live: "https://real-time-stock-screener-1792771238.vercel.app",
+    github: "https://github.com/nishantstackdev/real-time-stock-screener-1792771238-uugn66-nishantstackdev",
     isVideoDemo: false,
   },
   {
